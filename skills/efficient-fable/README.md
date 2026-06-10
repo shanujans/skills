@@ -16,6 +16,9 @@ passes.
   browser checks, and attempt bounded patches.
 - Keeps evidence flowing back to Fable as files, commands, diffs, failures, and
   uncertainties.
+- Uses self-contained handoff packets so delegated agents can work without
+  hidden context from the orchestrator chat.
+- Reminds Fable to verify important delegated claims before relying on them.
 
 ## When To Use It
 
@@ -34,6 +37,17 @@ reduce logs, and report whether failures look real, flaky, or environmental.
 
 The point is not to outsource responsibility. Fable still decides what signal is
 trustworthy.
+
+## Delegation Quality
+
+Good handoffs include the repo path, exact objective, in-scope and out-of-scope
+areas, expected evidence, verification commands, and stop conditions. A lighter
+agent should know when to stop and report instead of widening the task on its
+own.
+
+Fable should treat delegated reports as leads. For important decisions, it
+reopens the cited files or logs and checks that the evidence really supports the
+claim.
 
 ## Diagram
 

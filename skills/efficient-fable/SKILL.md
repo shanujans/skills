@@ -28,12 +28,36 @@ Reserve Fable for:
    bug hunts, browser/testing passes, test output reduction, and bounded code
    edits.
 4. Ask subagents for concise evidence: files, line references, commands run,
-   diffs, and uncertainties.
+   diffs, uncertainties, and stop conditions they hit.
 5. Spend Fable tokens on the decision layer: compare results, resolve conflicts,
    choose the implementation path, and review the final patch.
 
 Prefer parallel subagents when the slices do not depend on each other. Keep
 blocking or highly coupled work local.
+
+## Handoff Packets
+
+Write delegated prompts as if the subagent has no useful chat context. Include
+only the context it needs:
+
+- The repo path and exact objective.
+- The files, packages, or surfaces in scope and anything explicitly out of
+  scope.
+- The evidence format to return: files, line refs, commands, diffs, failures,
+  screenshots, and uncertainty.
+- The verification commands or browser flows to run, plus what success should
+  look like when that is knowable.
+- Stop conditions: if the code does not match the prompt, a command fails after
+  a reasonable retry, or the task needs out-of-scope files, stop and report
+  instead of improvising.
+
+## Vetting Delegated Work
+
+Treat subagent reports as leads, not facts. Before using a high-impact finding,
+opening a PR, or telling the user the work is done, Fable should reopen the
+important cited files, confirm the relevant line refs or failures, and review
+the final diff against the task. Let lighter agents gather signal; keep
+truth-judgment with Fable.
 
 ## Common Scenarios
 

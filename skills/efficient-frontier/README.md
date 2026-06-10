@@ -13,6 +13,10 @@ judgment, synthesis, integration, and final quality.
 - Pushes research scans, docs extraction, log reduction, browser checks,
   mechanical edits, and narrow coding tasks to cheaper agents.
 - Asks delegated agents for compact evidence instead of broad essays.
+- Uses self-contained handoff packets with scope, verification, and stop
+  conditions.
+- Treats delegated findings as leads that the frontier model verifies before
+  relying on them.
 - Keeps final integration and risk assessment with the frontier model.
 
 ## When To Use It
@@ -29,6 +33,15 @@ when the next step depends on one immediate blocker you need to inspect yourself
 The frontier model should choose the validation plan. Cheaper agents can run
 unit checks, browser flows, screenshots, and log reduction, then return exact
 commands, failures, likely causes, and the signal quality.
+
+## Delegation Quality
+
+Give each delegated agent enough context to succeed without the full chat:
+objective, repo path, in-scope files, out-of-scope areas, expected evidence,
+verification commands, and stop conditions.
+
+The frontier model should reopen important cited files, review high-risk diffs,
+and spot-check verification before presenting the final answer.
 
 ## Install
 

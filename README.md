@@ -27,6 +27,16 @@ and final review; use cheaper agents for bounded heavy lifting.
 Solves for broad work that can be parallelized without asking the most expensive
 model to do every scan and every edit itself.
 
+### [`stay-within-limits`](skills/stay-within-limits/README.md)
+
+Check current 5-hour and weekly usage before substantial work and between
+parallel waves, then pause new execution at 95% until the active window is clear
+enough to continue.
+
+Solves for long-running agent sessions that accidentally exhaust the current
+budget window mid-task instead of pausing cleanly and resuming with a
+self-contained plan.
+
 ### [`visual-plan`](skills/visual-plan/README.md)
 
 Publish an Agent-Native Plan before risky or ambiguous implementation work, with
@@ -68,6 +78,7 @@ Useful one-liners:
 
 ```sh
 agent-native skills add BuilderIO/skills --skill efficient-fable --update-instructions
+agent-native skills add BuilderIO/skills --skill stay-within-limits --update-instructions
 agent-native skills add BuilderIO/skills --skill quick-recap --update-instructions
 agent-native skills add BuilderIO/skills --skill visual-recap --with-github-action
 ```

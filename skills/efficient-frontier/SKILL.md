@@ -15,11 +15,32 @@ repeatable, bounded, or token-heavy work to cheaper/faster subagents.
 2. Identify delegable work: research scans, repository inventory, search, docs
    extraction, browser/testing passes, log reduction, test failure clustering,
    narrow coding, and mechanical edits.
-3. Spawn parallel subagents for independent slices with clear ownership and
-   expected evidence.
+3. Spawn parallel subagents for independent slices with clear ownership,
+   bounded scope, verification gates, and expected evidence.
 4. Require compact returns: findings, changed files, commands run, residual
-   risk, and anything the frontier model must decide.
+   risk, stop conditions hit, and anything the frontier model must decide.
 5. Integrate and review centrally before presenting the result.
+
+## Handoff Packets
+
+Write delegated prompts as self-contained packets. Assume the receiving agent
+has not seen the conversation. Include the repo path, objective, scope,
+out-of-scope areas, relevant files or search targets, expected return format,
+verification commands, and stop conditions.
+
+Useful stop conditions:
+
+- The live code does not match the assumption in the handoff.
+- A verification command fails twice after a reasonable fix or retry.
+- The work appears to require files outside the assigned scope.
+- The agent cannot produce concrete evidence for its claim.
+
+## Review Loop
+
+Treat delegated output as evidence to inspect, not a verdict to forward. Reopen
+important cited files, skim high-risk diffs, and rerun or spot-check the
+verification that matters before claiming completion. If delegated agents
+disagree, resolve the disagreement at the frontier-model layer.
 
 ## Common Scenarios
 
