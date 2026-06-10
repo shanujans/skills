@@ -1,4 +1,4 @@
-# Builder Skills
+# Skills for coding agents
 
 Small, composable skills for coding agents.
 
