@@ -57,10 +57,26 @@ plan needs a richer review surface.
   even if most of the feature ships later. Then scope to the smallest first cut that
   proves the approach without foreclosing it, stating both what is in and what is
   explicitly deferred.
-- **Preserve existing plans.** If the user pasted, referenced, or already has a
-  Codex / Claude Code / Markdown plan, treat it as source material. Preserve its
-  intent, do not invent codebase facts, label inferred visuals as inferred, and
-  build the visual review structure around the plan the user already has.
+- **Keep examples at the right altitude.** When the user's idea is a broad
+  framework, product, or operating-model change, do not collapse it into the
+  first concrete example, provider, or sync path they mention. Separate the core
+  abstraction from motivating examples and app/provider adapters. Use examples
+  to make the plan legible, but label them as examples unless they are the whole
+  requested scope.
+- **Publish standalone plans.** If the user pasted, referenced, or already has a
+  Codex / Claude Code / Markdown plan, treat it as source material, but rewrite
+  the published plan as a clean standalone proposal. Preserve the source plan's
+  useful intent and codebase facts, label inferred visuals as inferred, and avoid
+  revision language such as "preserve the prior plan", "do not drop the old
+  idea", "unlike the previous version", or "this revision changes...". A reader
+  who never saw the chat or earlier drafts should understand the plan.
+- **Make the first read concrete.** If the plan is meant to be shared with
+  someone outside the chat, or if the concept is abstract, lead near the top with
+  one concrete product example before mode tables, architecture, or roadmaps. For
+  UI-capable concepts, that usually means a top-canvas app state that shows the
+  real user workflow in product terms. Do not rely on phrases that only make
+  sense in conversation, and do not frame the plan as "not the old idea"; state
+  the positive model directly.
 - **Planning is read-only.** Make no source edits while building or reviewing the
   plan. Start editing only after the user approves the direction.
 - **Clarify vs. assume.** Do not ask how to build it — explore and present the
@@ -70,14 +86,19 @@ plan needs a richer review surface.
   questions before finalizing. Do not call `create-visual-questions` from
   `/visual-plan`. Otherwise state the assumption explicitly and proceed, and
   keep anything unresolved in the plan's single bottom `question-form` Open
-  Questions block.
+  Questions block. For complex plans, do a final open-question pass before
+  handoff: if a decision would affect architecture, scope, UX, data shape, or
+  rollout, either decide it in the plan with rationale or put it in that bottom
+  form with a recommended default.
 - **The plan is the approval gate.** After surfacing it, ask the user to review
   and approve before you write code, and name which files/areas the work touches.
   Presenting the plan and requesting sign-off is the approval step — do not ask a
   separate "does this look good?" question.
 - **The document is the source of truth, not the chat.** When scope shifts,
   update the plan with `update-visual-plan` rather than only changing course in
-  chat, and re-read the approved plan before major steps.
+  chat, and make the updated document stand alone. Do not describe the update as
+  a correction to an earlier draft inside the plan itself. Re-read the approved
+  plan before major steps.
 
 ## Always Publish As An Agent-Native Plan — Never Inline
 
@@ -87,12 +108,15 @@ plan over as inline chat content — no Markdown prose, ASCII sketch, table, or
 fenced wireframe. If the connector's tools are missing, do NOT fall back to
 inline output: the usual cause is a connector that did not finish connecting
 this session (it registers zero tools), not auth. Stop and give the user the
-exact restore step — in Claude Code run `/mcp` and choose
-Authenticate/Reconnect (or restart the session); if genuinely unauthenticated,
-run `npx -y @agent-native/core@latest reconnect https://plan.agent-native.com` — this
-re-authenticates WITHOUT reinstalling. Never reinstall from scratch just to fix
-auth. Publish once the tool is reachable. Local-files privacy mode (after Tool
-Guidance) is the only exception.
+exact restore step for their current client: in Codex/Codex Desktop run
+`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex`
+and start a new Codex session; in Claude Code run `/mcp` and choose
+Authenticate/Reconnect (or run the same reconnect command with
+`--client claude-code` and restart Claude). Auth is stored per client
+config/session, so one client's reconnect does not make another running client
+load tools. Never reinstall from scratch just to fix auth. Publish once the tool
+is reachable. Local-files privacy mode (after Tool Guidance) is the only
+exception.
 
 ## Core Workflow
 
@@ -108,14 +132,19 @@ Guidance) is the only exception.
    for prototype-first plans, `create-plan-design` for design-first plans,
    `create-visual-questions` only when the user explicitly asks for a visual
    intake questionnaire. When a source plan already exists,
-   pass it as `planText` and preserve the original plan's intent while adding
-   structured review content.
-3. Compose or enrich any top UI/product visual surface and write the document
-   with native blocks (see `references/canvas.md` and
-   `references/document-quality.md`). Keep the document close to the Markdown
-   plan the agent would normally output, or to the existing plan when one was
-   provided. For non-visual plans, skip the top visual surface (Visual Surface
-   Choice below owns the rule) and put `diagram`, `data-model`,
+   pass it as `planText` and preserve the original plan's useful intent while
+   producing a standalone plan document, not a revision memo.
+3. For UI/product plans, compose the top canvas first with the primary
+   wireframes and annotated states, then write the document with native blocks
+   (see `references/canvas.md` and `references/document-quality.md`). For
+   broad product architecture plans with a user-facing implication, add a
+   concrete "what this looks like in the app" visual before the abstract
+   architecture or mode tables. Keep the document close to the standalone
+   Markdown plan the agent would normally output. If an existing plan was
+   provided, carry forward the right facts and decisions without referring to
+   the previous draft or explaining how this version differs. For non-visual
+   plans, skip the top visual surface (Visual Surface Choice below owns the rule)
+   and put `diagram`, `data-model`,
    `api-endpoint`, `diff`, `file-tree`, `code`, and `annotated-code` blocks
    directly next to the relevant prose.
 4. Surface the returned Plans link or inline MCP App and ask the user to review.
@@ -136,9 +165,13 @@ Guidance) is the only exception.
    review events, and any focused screenshots from browser handoff as the source
    of truth for exactly what changed and exactly what each comment points at.
 6. Apply changes with `update-visual-plan`, preferring targeted `contentPatches`.
-   When the user wants source-control friendly edits, use
-   `patch-visual-plan-source` against the MDX files instead of regenerating the
-   plan.
+   Treat the top-level `content` payload as a full replacement, not a merge; do
+   not send a partial `content` object to add a canvas or one block. If a full
+   replacement is unavoidable, first read the complete plan source/content, carry
+   forward every existing block and visual surface, and verify the source/export
+   afterward so the document body was not truncated. When the user wants
+   source-control friendly edits, use `patch-visual-plan-source` against the MDX
+   files instead of regenerating the plan.
 7. Export with `export-visual-plan` only when the user wants a shareable receipt
    or repo-check-in artifacts.
 
@@ -174,6 +207,28 @@ outweighs the value. Keep the pass cheap and non-blocking:
 
 Choose the surface before creating the plan or after reading the source plan. Do
 not add visual chrome by default:
+
+For UI/product plans, the top canvas is usually the primary review surface. Put
+the first meaningful wireframes there, not buried as document-body blocks. Use
+multiple canvas artboards when states matter, such as the default view, an
+overflow menu or popover, a side panel, loading, or error. Put short annotations
+beside frames with `targetId` plus `placement`; keep implementation details,
+tradeoffs, file maps, data contracts, risks, and verification in the document
+body below the canvas.
+
+Keep product wireframes and explanatory/meta diagrams separate. Start with pure
+screens that look like the app state under discussion, without callout prose or
+architecture notes embedded inside the UI. Put arrows, labels, contracts, data
+flow, and mode explanations in separate annotations, separate canvas diagrams,
+or the document body.
+
+When the plan touches an existing app, inspect the current shell/components
+before drawing. The first artboard should look like the real app at the same
+density: existing sidebars, toolbar placement, overflow menus, app chrome, and
+framework agent chrome stay in their real places. Model secondary surfaces as
+separate states, such as a top-right overflow popover, sheet, panel, loading
+state, or separate AgentSidebar, rather than inventing a permanent inspector or
+folding framework chrome into the product UI.
 
 - **No visual surface** for architecture-only, backend-only, data migration,
   copy-only, or otherwise non-visual plans. Do not use the top canvas for
@@ -343,9 +398,10 @@ review need.
 There are two ways into Plans.
 
 **Coding agent (CLI).** Install once with the Agent-Native CLI. The command
-installs the Plans skills, registers the hosted Plans MCP connector, and
-authenticates it in the same step (a one-time browser sign-in at setup — this is
-intended), so the first tool call does not hit an OAuth wall:
+installs the Plans skills, registers the hosted Plans MCP connector, and runs
+auth/setup for the selected local client(s) in the same step (a one-time browser
+sign-in at setup — this is intended), so the first tool call in that client does
+not hit an OAuth wall:
 
 ```bash
 npx @agent-native/core@latest skills add visual-plan
@@ -356,7 +412,9 @@ commands. The other planning modes (`create-ui-plan`, `create-prototype-plan`,
 `create-plan-design`, `create-visual-questions`) are MCP tools reachable from
 `/visual-plan`, not separate slash commands. Pass `--no-connect` to register
 the connector without authenticating, then run
-`npx @agent-native/core@latest connect https://plan.agent-native.com` whenever you are ready.
+`npx @agent-native/core@latest connect https://plan.agent-native.com --client all`
+whenever you are ready, or choose a narrower `--client`. Auth and MCP tool
+loading are per client config/session.
 
 **Browser (people you share with).** Open the Plans editor and create & edit
 with no sign-up — you work as a guest. Sign in only when you want to save or
@@ -370,13 +428,16 @@ your repo as MDX. This local mode is a separate advanced path, not the default
 hosted flow.
 
 If a Plans tool returns `needs auth`, `Unauthorized`, or `Session terminated`,
-do not keep retrying the tool. Stop and give the user the reconnect step: in
-Claude Code run `/mcp` and choose Authenticate/Reconnect for the plan
-connector; from any terminal run
-`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com` — this
-re-authenticates WITHOUT reinstalling and finds the entry by URL regardless of
-connector name. Never reinstall from scratch just to fix auth. Continue once
-the connector is available.
+do not keep retrying the tool. Stop and give the user the reconnect step for the
+client they are using: Codex/Codex Desktop should run
+`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex`
+and start a new Codex session; Claude Code should run `/mcp` and choose
+Authenticate/Reconnect for the plan connector, or run the reconnect command with
+`--client claude-code` and restart Claude. To refresh every local client config
+that already has the Plan entry, use `--client all`, then restart/reload each
+client. Reconnect re-authenticates WITHOUT reinstalling and finds the entry by
+URL regardless of connector name. Never reinstall from scratch just to fix auth.
+Continue once the connector is available.
 
 Hosted default: connect `https://plan.agent-native.com/_agent-native/mcp`. Do
 not put shared secrets in skill files.
