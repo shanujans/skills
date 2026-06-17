@@ -19,7 +19,7 @@ maps, OpenAPI-style API diffs, file maps, UI state summaries, and focused review
 notes.
 
 Visual recaps are MDX, customizable with your own components, and viewed with
-the [Agent-Native plans app](https://www.agent-native.com/docs/template-plan).
+the free, open-source [Agent-Native plans app](https://www.agent-native.com/docs/template-plan).
 [Source here](https://github.com/BuilderIO/agent-native/).
 
 <picture>

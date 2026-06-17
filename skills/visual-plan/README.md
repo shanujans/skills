@@ -17,7 +17,7 @@ changes start.
 </picture>
 
 Visual plans are MDX, customizable with your own components, and viewed with the
-[Agent-Native plans app](https://www.agent-native.com/docs/template-plan).
+free, open-source [Agent-Native plans app](https://www.agent-native.com/docs/template-plan).
 [Source here](https://github.com/BuilderIO/agent-native/).
 
 ## What It Does
@@ -59,4 +59,10 @@ actual codebase.
 npx @agent-native/skills@latest add --skill visual-plan
 ```
 
-The skill expects the [Plan MCP connector](https://www.agent-native.com/docs/template-plan) to be available when it is used.
+The skill expects the [Plan MCP connector](https://www.agent-native.com/docs/template-plan) to be available when it is used, unless
+local-files privacy mode is explicitly enabled. For a fully local, no-account,
+no-sharing setup, install with local-files mode:
+
+```sh
+npx @agent-native/skills@latest add --skill visual-plan --mode local-files
+```
