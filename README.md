@@ -135,7 +135,9 @@ The installer walks you through the choices:
 - Which skills to install.
 - Where visual plans and recaps should live: hosted shareable links
   (recommended), local files only, or a self-hosted/custom Plan app.
-- Agent Skills / Codex, Claude Code, or both.
+- Agent Skills through the shared `.agents` path for Codex, Pi, Cursor,
+  OpenCode, GitHub Copilot / VS Code, and similar agents, plus Claude Code's
+  native skills path when selected.
 - User-level or project-level install.
 - Whether to add managed `AGENTS.md` / `CLAUDE.md` instruction blocks when the
   selected skills have always-on guidance.

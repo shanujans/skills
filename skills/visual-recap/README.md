@@ -56,9 +56,14 @@ the risky lines are. Then they can review the raw diff with a map in their head.
   Agent-Native plans app at plan.agent-native.com for shareable links, comments,
   and the browser editor.
 - **Local files only:** writes `plans/<slug>/plan.mdx` in your repo and opens a
-  local preview. No sharing, all local.
+  local Plan app route with the same review UI. No sharing, all local, and no
+  recap content is written to the hosted database.
 - **Self-hosted/custom URL:** connects the skill to your own Plan app or local
   development tunnel.
+
+Use hosted mode when you want comments and shareable links. Use local files mode
+when the recap should live in source control or stay on your machine; the agent
+writes MDX files, then opens the local Plan app at `/local-plans/<slug>`.
 
 ## GitHub Action
 
